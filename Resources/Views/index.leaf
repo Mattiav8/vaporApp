@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-#// 1
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  #// 2
-  <title>#(title) | Acronyms</title>
-</head>
-<body>
-  #// 1
+#set("content") {
+  <img scr="/images/logo.png" class="mx-auto d-block" alt="TIL Logo" />
   <h1>Acronyms</h1>
 
   #// 2
   #if(acronyms) {
     #// 3
-    <table>
-      <thead>
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
         <tr>
           <th>Short</th>
           <th>Long</th>
@@ -35,5 +27,5 @@
   } else {
     <h2>There aren't any acronyms yet!</h2>
   }
-</body>
-</html>
+}
+#embed("base")
