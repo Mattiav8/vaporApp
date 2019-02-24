@@ -52,6 +52,14 @@
                             Create An Acronym
                         </a>
                     </li>
+                    #// 1
+                    #if(!userLoggedIn) {
+                        #// 2
+                        <li class="nav-item #if(title == "Register"){active}">
+                            #// 3
+                            <a href="/register" class="nav-link">Register</a>
+                        </li>
+                    }
                 </ul>
                 #// 1
                 #if(userLoggedIn) {
