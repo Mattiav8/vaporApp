@@ -2,6 +2,7 @@ import FluentPostgreSQL
 import Vapor
 import Leaf
 import Authentication
+import SendGrid
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
@@ -9,6 +10,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     try services.register(FluentPostgreSQLProvider())
     try services.register(LeafProvider())
     try services.register(AuthenticationProvider())
+    try services.register(SendGridProvider())
 
     /// Register routes to the router
     let router = EngineRouter.default()
@@ -51,7 +53,15 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Category.self, database: .psql)
     migrations.add(model: AcronymCategoryPivot.self, database: .psql)
     migrations.add(model: Token.self, database: .psql)
-    migrations.add(migration: AdminUser.self, database: .psql)
+    switch env {
+    case .development, .testing:
+        migrations.add(migration: AdminUser.self, database: .psql)
+    default:
+        break
+    }
+    migrations.add(model: ResetPasswordToken.self, database: .psql)
+    migrations.add(migration: AddTwitterURLToUser.self, database: .psql)
+    migrations.add(migration: MakeCategoriesUnique.self, database: .psql)
     services.register(migrations)
 
     var commandConfig = CommandConfig.default()
@@ -60,4 +70,13 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     config.prefer(LeafRenderer.self, for: ViewRenderer.self)
     config.prefer(MemoryKeyedCache.self, for: KeyedCache.self)
+
+    // 1
+    guard let sendGridAPIKey = Environment.get("SENDGRID_API_KEY") else {
+        fatalError("No Send Grid API Key specified")
+    }
+    // 2
+    let sendGridConfig = SendGridConfig(apiKey: sendGridAPIKey)
+    // 3
+    services.register(sendGridConfig)
 }

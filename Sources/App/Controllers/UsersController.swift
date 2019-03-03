@@ -14,6 +14,11 @@ struct UsersController: RouteCollection {
         let guardAuthMiddleware = User.guardAuthMiddleware()
         let tokenAuthGroup = usersRoute.grouped(tokenAuthMiddleware, guardAuthMiddleware)
         tokenAuthGroup.post(User.self, use: createHandler)
+        // API Version 2 Routes
+        // 1
+        let usersV2Route = router.grouped("api", "v2", "users")
+        // 2
+        usersV2Route.get(User.parameter, use: getV2Handler)
     }
     func createHandler(_ req: Request, user: User) throws -> Future<User.Public> {
         user.password = try BCrypt.hash(user.password)
@@ -26,6 +31,10 @@ struct UsersController: RouteCollection {
     
     func getHandler(_ req: Request) throws -> Future<User.Public> {
         return try req.parameters.next(User.self).convertToPublic()
+    }
+
+    func getV2Handler(_ req: Request) throws -> Future<User.PublicV2> {
+        return try req.parameters.next(User.self).convertToPublicV2()
     }
     
     func getAcronymsHandler(_ req: Request) throws -> Future<[Acronym]> {

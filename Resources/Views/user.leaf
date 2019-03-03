@@ -1,10 +1,21 @@
 #// 1
 #set("content") {
+    #if(user.profilePicture) {
+        <img src="/users/#(user.id)/profilePicture" alt="#(user.name)">
+    }
     #// 2
     <h1>#(user.name)</h1>
     #// 3
-    <h2>#(user.username)</h2>
-
+    <h2>#(user.username)
+        #if(user.twitterURL) {
+        - #(user.twitterURL)
+        }
+    </h2>
+    #if(authenticatedUser) {
+    <a href="/users/#(user.id)/addProfilePicture">
+        #if(user.profilePicture){Update} else{Add} Profile Picture
+    </a>
+    }
     #// 4
     #if(count(acronyms) > 0) {
     <table class="table table-bordered table-hover">

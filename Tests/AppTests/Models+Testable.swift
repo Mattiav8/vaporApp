@@ -11,7 +11,7 @@ extension User {
             createUsername = UUID().uuidString
         }
         let password = try BCrypt.hash("password")
-        let user = User(name: name, username: createUsername, password: password)
+        let user = User(name: name, username: createUsername, password: password, email: "\(createUsername)@test.com")
         return try user.save(on: connection).wait()
     }
 }
